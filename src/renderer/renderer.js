@@ -90,6 +90,22 @@ function showModal(show) {
     document.getElementById('meetingModal').style.display = show ? 'flex' : 'none';
 }
 
+// Function to get mic audio
+async function getMicAudio() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('Mic audio stream:', stream);
+        // You can now use this stream for recording, processing, etc.
+        // For example, attach to an audio element:
+        // const audio = new Audio();
+        // audio.srcObject = stream;
+        // audio.play();
+    } catch (err) {
+        console.error('Error accessing mic:', err);
+        alert('Could not access microphone.');
+    }
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Query elements inside DOMContentLoaded
@@ -174,4 +190,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // Set initial theme
     document.documentElement.setAttribute('data-theme', 'light');
+    getMicAudio();
 }); 
