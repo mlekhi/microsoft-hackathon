@@ -42,5 +42,9 @@
     "linux": {
       "target": "AppImage"
     }
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "openai": "^5.7.0"
   }
 }
