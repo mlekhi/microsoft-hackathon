@@ -18,8 +18,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.3.3",
-    "electron-builder": "^24.6.4",
-    "vite": "^6.3.5"
+    "electron-builder": "^24.6.4"
   },
   "build": {
     "appId": "com.example.electron-app",
@@ -28,8 +27,7 @@
       "output": "dist"
     },
     "files": [
-      "src/**/*",
-      "assets/**/*"
+      "src/**/*"
     ],
     "mac": {
       "category": "public.app-category.utilities"
@@ -40,9 +38,5 @@
     "linux": {
       "target": "AppImage"
     }
-  },
-  "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
   }
 }
