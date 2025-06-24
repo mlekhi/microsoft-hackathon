@@ -3,78 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electron App</title>
+    <title>Overlay</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <h1>Electron App</h1>
+    <div class="overlay">
+        <div class="header">
+            <div class="title">⚡ Overlay</div>
+            <div class="controls">
+                <button id="hideBtn" class="btn">−</button>
+                <button id="closeBtn" class="btn">×</button>
             </div>
-            <div class="app-info">
+        </div>
+        
+        <div class="content">
+            <div class="status">
+                <span id="status">Ready</span>
                 <span id="version">v1.0.0</span>
-                <span id="platform">macOS</span>
             </div>
-        </header>
-
-        <main class="main-content">
-            <div class="welcome-section">
-                <h2>Welcome to Your Electron App!</h2>
-                <p>This is a modern Electron application with a beautiful UI.</p>
+            
+            <div class="actions">
+                <button id="actionBtn" class="action-btn">Action</button>
+                <button id="themeBtn" class="theme-btn">🌙</button>
             </div>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Fast & Lightweight</h3>
-                    <p>Built with modern web technologies for optimal performance.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure</h3>
-                    <p>Context isolation and secure IPC communication.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Beautiful UI</h3>
-                    <p>Modern design with smooth animations and transitions.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>Customizable</h3>
-                    <p>Easy to modify and extend with your own features.</p>
-                </div>
+            
+            <div class="info">
+                <span id="counter">0</span> actions
             </div>
-
-            <div class="action-section">
-                <button id="newButton" class="btn btn-primary">
-                    <span class="btn-icon">➕</span>
-                    New Item
-                </button>
-                <button id="themeToggle" class="btn btn-secondary">
-                    <span class="btn-icon">🌙</span>
-                    Toggle Theme
-                </button>
-            </div>
-
-            <div class="status-section">
-                <div class="status-item">
-                    <span class="status-label">Status:</span>
-                    <span id="status" class="status-value">Ready</span>
-                </div>
-                <div class="status-item">
-                    <span class="status-label">Last Action:</span>
-                    <span id="lastAction" class="status-value">None</span>
-                </div>
-            </div>
-        </main>
-
-        <footer class="footer">
-            <p>&copy; 2024 Electron App. Built with ❤️ using Electron.</p>
-        </footer>
+        </div>
     </div>
 
     <script src="renderer.js"></script>

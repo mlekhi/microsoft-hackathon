@@ -6,11 +6,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Get app version
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   
-  // Get platform
-  getPlatform: () => ipcRenderer.invoke('get-platform'),
+  // Overlay-specific APIs
+  toggleWindowVisibility: () => ipcRenderer.invoke('toggle-window-visibility'),
   
   // Listen for menu events
   onMenuNew: (callback) => ipcRenderer.on('menu-new', callback),
+  onClickThroughToggled: (callback) => ipcRenderer.on('click-through-toggled', callback),
   
   // Remove listeners
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)

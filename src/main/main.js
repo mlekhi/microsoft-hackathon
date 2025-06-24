@@ -1,21 +1,36 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 
 // Keep a global reference of the window object
 let mainWindow;
 
 function createWindow() {
-  // Create the browser window
+  // Get primary display info for overlay positioning
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width } = primaryDisplay.workAreaSize;
+  
+  // Create the browser window as an overlay
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 300,
+    height: 400,
+    x: width - 320, // Position on the right side
+    y: 20,
+    frame: false, // Remove window frame
+    alwaysOnTop: true, // Keep window on top
+    resizable: false, // Prevent resizing
+    movable: true, // Allow moving
+    skipTaskbar: true, // Don't show in taskbar
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, '../preload/preload.js')
     },
-    icon: path.join(__dirname, '../../assets/icons/icon.png'), // Optional: add an icon
-    show: false // Don't show until ready
+    icon: path.join(__dirname, '../../assets/icons/icon.png'),
+    show: false,
+    transparent: true, // Enable transparency
+    hasShadow: false, // Remove shadow for cleaner look
+    titleBarStyle: 'hidden',
+    titleBarOverlay: false
   });
 
   // Load the index.html file
@@ -35,74 +50,25 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Prevent window from being closed with Alt+F4
+  mainWindow.on('close', (event) => {
+    if (!app.isQuiting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
 }
 
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
   createWindow();
 
-  // Create application menu
-  const template = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'New',
-          accelerator: 'CmdOrCtrl+N',
-          click: () => {
-            mainWindow.webContents.send('menu-new');
-          }
-        },
-        { type: 'separator' },
-        {
-          label: 'Quit',
-          accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
-          click: () => {
-            app.quit();
-          }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' }
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' },
-        { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    },
-    {
-      label: 'Window',
-      submenu: [
-        { role: 'minimize' },
-        { role: 'close' }
-      ]
-    }
-  ];
-
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
+    } else {
+      mainWindow.show();
     }
   });
 });
@@ -119,6 +85,11 @@ ipcMain.handle('get-app-version', () => {
   return app.getVersion();
 });
 
-ipcMain.handle('get-platform', () => {
-  return process.platform;
+ipcMain.handle('toggle-window-visibility', () => {
+  if (mainWindow.isVisible()) {
+    mainWindow.hide();
+  } else {
+    mainWindow.show();
+  }
+  return mainWindow.isVisible();
 }); 
