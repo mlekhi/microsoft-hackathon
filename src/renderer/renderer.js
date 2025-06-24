@@ -143,10 +143,31 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     cancelMeetingBtn.onclick = () => showModal(false);
     createMeetingBtn.onclick = () => {
-        const title = document.getElementById('meetingTitle').value.trim();
+        const titleInput = document.getElementById('meetingTitle').value.trim();
         const context = document.getElementById('meetingContext').value.trim();
-        if (!title) return alert('Title required');
-        const date = new Date().toLocaleString();
+        if (!titleInput) return alert('Title required');
+        // Parse @ <time> from title
+        let title = titleInput;
+        let date = '';
+        const atMatch = titleInput.match(/@\s*([^@]+)/);
+        if (atMatch) {
+            const timeStr = atMatch[1].trim();
+            // Try parsing as a full date/time first
+            let parsed = new Date(timeStr);
+            if (isNaN(parsed.getTime())) {
+                // Try appending to today if only time is given
+                const today = new Date();
+                parsed = new Date(today.toDateString() + ' ' + timeStr);
+            }
+            if (!isNaN(parsed.getTime())) {
+                date = parsed.toLocaleString();
+            } else {
+                date = timeStr; // fallback: just show what user typed
+            }
+            title = titleInput.replace(/@\s*[^@]+/, '').trim();
+        } else {
+            date = 'TBD';
+        }
         meetings.push({ title, context, date });
         showModal(false);
         renderMeetings();
