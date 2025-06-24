@@ -11,9 +11,9 @@ function createWindow() {
   
   // Create the browser window as an overlay
   mainWindow = new BrowserWindow({
-    width: 300,
-    height: 400,
-    x: width - 320, // Position on the right side
+    width: 500,
+    height: 700,
+    x: width - 520, // Position on the right side
     y: 20,
     frame: false, // Remove window frame
     alwaysOnTop: true, // Keep window on top

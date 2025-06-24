@@ -10,8 +10,6 @@
   --accent-secondary: #6366f1;
   --border-color: rgba(226, 232, 240, 0.6);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --radius: 12px;
   --transition: all 0.2s ease-in-out;
   --backdrop-blur: blur(10px);
@@ -46,7 +44,7 @@ body {
 .overlay {
   width: 100%;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -91,17 +89,17 @@ body {
 }
 
 .btn {
-  width: 20px;
-  height: 20px;
   border: none;
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.1);
   color: #333;
-  font-size: 12px;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px 16px;
+  transition: background 0.2s;
 }
 
 [data-theme="dark"] .btn {
@@ -174,7 +172,7 @@ body {
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.1);
   color: #333;
-  font-size: 14px;
+  font-size: 1.2rem;
   cursor: pointer;
 }
 
@@ -504,4 +502,114 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* Meetings UI styles */
+.meetings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 8px 16px;
+}
+.meetings-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+.meetings-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.meetings-list {
+  padding: 0 16px 16px 16px;
+}
+.meeting-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.meeting-title {
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+.meeting-date {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 32px 24px;
+  box-shadow: var(--shadow-lg);
+  min-width: 320px;
+  max-width: 90vw;
+}
+.modal-content h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+.modal-content label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  margin-top: 12px;
+}
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: border 0.2s;
+}
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: var(--accent-primary);
+  outline: none;
+}
+.modal-content button.btn {
+  margin-right: 10px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  border-radius: 6px;
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-content button.btn:last-child {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.modal-content button.btn:hover {
+  background: var(--accent-secondary);
 } 

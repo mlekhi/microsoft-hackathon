@@ -8,27 +8,21 @@
 </head>
 <body>
     <div class="overlay">
-        <div class="header">
-            <div class="title">⚡ Overlay</div>
-            <div class="controls">
-                <button id="hideBtn" class="btn">−</button>
-                <button id="closeBtn" class="btn">×</button>
+        <div class="meetings-header">
+            <h1 class="meetings-title">Meetings</h1>
+            <div class="meetings-controls">
+                <button id="addMeetingBtn" class="btn">+ Add New Meeting</button>
+                <button id="themeBtn" class="theme-btn" title="Toggle theme">🌙</button>
             </div>
         </div>
-        
-        <div class="content">
-            <div class="status">
-                <span id="status">Ready</span>
-                <span id="version">v1.0.0</span>
-            </div>
-            
-            <div class="actions">
-                <button id="actionBtn" class="action-btn">Action</button>
-                <button id="themeBtn" class="theme-btn">🌙</button>
-            </div>
-            
-            <div class="info">
-                <span id="counter">0</span> actions
+        <div id="meetingsList" class="meetings-list"></div>
+        <div id="meetingModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h2>New Meeting</h2>
+                <label>Title:<br><input id="meetingTitle" type="text"></label><br>
+                <label>Context:<br><textarea id="meetingContext"></textarea></label><br>
+                <button id="createMeetingBtn" class="btn">Create</button>
+                <button id="cancelMeetingBtn" class="btn">Cancel</button>
             </div>
         </div>
     </div>
