@@ -11,6 +11,8 @@ const closeBtn = document.getElementById('closeBtn');
 let counter = 0;
 let isDark = false;
 let meetings = [];
+let mediaRecorder;
+let audioChunks = [];
 
 // Initialize
 async function init() {
@@ -106,6 +108,60 @@ async function getMicAudio() {
     }
 }
 
+async function sendAudioToWhisper(audioBlob) {
+    const apiKey = 'YOUR_OPENAI_API_KEY'; // <-- Replace with your OpenAI API key
+    const formData = new FormData();
+    formData.append('file', audioBlob, 'audio.webm');
+    formData.append('model', 'whisper-1');
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`
+        },
+        body: formData
+    });
+
+    const data = await response.json();
+    return data.text;
+}
+
+function setupRecordingUI() {
+    const startBtn = document.getElementById('startRecBtn');
+    const stopBtn = document.getElementById('stopRecBtn');
+    const transcriptDisplay = document.getElementById('transcriptDisplay');
+
+    startBtn.onclick = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) audioChunks.push(event.data);
+        };
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            transcriptDisplay.textContent = 'Transcribing...';
+            try {
+                const transcript = await sendAudioToWhisper(audioBlob);
+                transcriptDisplay.textContent = transcript;
+            } catch (err) {
+                transcriptDisplay.textContent = 'Transcription failed.';
+            }
+        };
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+    };
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Query elements inside DOMContentLoaded
@@ -191,4 +247,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set initial theme
     document.documentElement.setAttribute('data-theme', 'light');
     getMicAudio();
+    setupRecordingUI();
 }); 
