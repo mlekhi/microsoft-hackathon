@@ -1,37 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlay</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overlay</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="overlay">
-        <div class="meetings-header">
-            <h1 class="meetings-title">Meetings</h1>
-            <div class="meetings-controls">
-                <button id="addMeetingBtn" class="btn">+ Add New Meeting</button>
-                <button id="themeBtn" class="theme-btn" title="Toggle theme">🌙</button>
-            </div>
-        </div>
-        <div id="meetingsList" class="meetings-list"></div>
-        <div style="padding: 0 16px 16px 16px;">
-            <button id="startRecBtn" class="btn">Start Recording</button>
-            <button id="stopRecBtn" class="btn" disabled>Stop & Transcribe</button>
-            <div id="transcriptDisplay" style="margin-top: 12px; color: var(--text-primary);"></div>
-        </div>
-        <div id="meetingModal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <h2>New Meeting</h2>
-                <label>Title:<br><input id="meetingTitle" type="text"></label><br>
-                <label>Context:<br><textarea id="meetingContext"></textarea></label><br>
-                <button id="createMeetingBtn" class="btn">Create</button>
-                <button id="cancelMeetingBtn" class="btn">Cancel</button>
-            </div>
-        </div>
+  <div class="overlay">
+    <div class="meetings-header">
+      <h1 class="meetings-title">Meetings</h1>
+      <div class="meetings-controls">
+        <button id="addMeetingBtn" class="btn">+ Add New Meeting</button>
+        <button id="themeBtn" class="theme-btn" title="Toggle theme">🌙</button>
+      </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <div id="meetingsList" class="meetings-list"></div>
+
+    <div style="padding: 0 16px 16px;">
+      <button id="startRecBtn" class="btn">Start Recording</button>
+      <button id="stopRecBtn" class="btn" disabled>Stop &amp; Transcribe</button>
+      <button id="whispertestBtn" class="btn">Test Whisper</button>
+      <div id="transcriptDisplay" style="margin-top: 12px; color: var(--text-primary);"></div>
+    </div>
+
+    <div id="meetingModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h2>New Meeting</h2>
+        <label>
+          Title:<br>
+          <input id="meetingTitle" type="text">
+        </label><br>
+        <label>
+          Context:<br>
+          <textarea id="meetingContext"></textarea>
+        </label><br>
+        <button id="createMeetingBtn" class="btn">Create</button>
+        <button id="cancelMeetingBtn" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+  <script>
+    // Navigate to Whisper test page
+    document.getElementById('whispertestBtn')
+      .addEventListener('click', () => {
+        window.location.href = 'whisper.html';
+      });
+  </script>
 </body>
-</html> 
+</html>
