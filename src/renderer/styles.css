@@ -50,6 +50,7 @@ body {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  -webkit-app-region: drag;
 }
 
 [data-theme="dark"] .overlay {
@@ -100,6 +101,7 @@ body {
   justify-content: center;
   padding: 8px 16px;
   transition: background 0.2s;
+  -webkit-app-region: no-drag;
 }
 
 [data-theme="dark"] .btn {
@@ -174,6 +176,7 @@ body {
   color: #333;
   font-size: 1.2rem;
   cursor: pointer;
+  -webkit-app-region: no-drag;
 }
 
 [data-theme="dark"] .theme-btn {
