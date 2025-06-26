@@ -1,54 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Overlay</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetMindr</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    .overlay {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .home-controls {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      font-size: 16px;
+      margin: 6px;
+      cursor: pointer;
+    }
+
+    .btn-large {
+      font-size: 18px;
+      padding: 12px 24px;
+    }
+  </style>
 </head>
 <body>
   <div class="overlay">
-    <div class="meetings-header">
-      <h1 class="meetings-title">Meetings</h1>
-      <div class="meetings-controls">
-        <button id="addMeetingBtn" class="btn">+ Add New Meeting</button>
-        <button id="themeBtn" class="theme-btn" title="Toggle theme">🌙</button>
-      </div>
+    <!-- Centered Title -->
+    
+
+    <!-- Centered Controls -->
+    <h1 class="app-title">MeetMindr</h1>
+    <div class="home-controls">
+      <button id="settingsBtn" class="btn">⚙️</button>
+      <button id="themeBtn" class="btn" title="Toggle theme">🌙</button>
     </div>
 
-    <div id="meetingsList" class="meetings-list"></div>
+    <!-- Start Monitoring -->
+    <button id="startMonitoringBtn" class="btn btn-large">🎙️ Start Monitoring</button>
+  </div>
 
-    <div style="padding: 0 16px 16px;">
-      <button id="startRecBtn" class="btn">Start Recording</button>
-      <button id="stopRecBtn" class="btn" disabled>Stop &amp; Transcribe</button>
-      <button id="whispertestBtn" class="btn">Test Whisper</button>
-      <div id="transcriptDisplay" style="margin-top: 12px; color: var(--text-primary);"></div>
-    </div>
-
-    <div id="meetingModal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <h2>New Meeting</h2>
-        <label>
-          Title:<br>
-          <input id="meetingTitle" type="text">
-        </label><br>
-        <label>
-          Context:<br>
-          <textarea id="meetingContext"></textarea>
-        </label><br>
-        <button id="createMeetingBtn" class="btn">Create</button>
-        <button id="cancelMeetingBtn" class="btn">Cancel</button>
-      </div>
+  <!-- Modal -->
+  <div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      <label>Quiz Frequency (mins): <input type="number" min="1" max="15" value="5" /></label><br />
+      <label>Voice Model: <select><option>Whisper</option></select></label><br />
+      <button class="btn">Save</button>
+      <button class="btn" onclick="document.getElementById('settingsModal').style.display='none'">Close</button>
     </div>
   </div>
 
-  <script src="renderer.js"></script>
   <script>
-    // Navigate to Whisper test page
-    document.getElementById('whispertestBtn')
-      .addEventListener('click', () => {
-        window.location.href = 'whisper.html';
-      });
+    document.getElementById('settingsBtn').onclick = () => {
+      document.getElementById('settingsModal').style.display = 'block';
+    };
+
+    document.getElementById('startMonitoringBtn').onclick = () => {
+      window.location.href = 'monitor.html';
+    };
   </script>
 </body>
 </html>
