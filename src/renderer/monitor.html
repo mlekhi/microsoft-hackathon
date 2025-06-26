@@ -35,13 +35,25 @@
       font-size: 32px;
       margin-bottom: 12px;
     }
+    .controls {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="overlay">
     <button class="back-button btn" onclick="window.location.href='index.html'">⬅️ Back</button>
     <h1>Monitoring</h1>
-    <p>MeetMindr is active and listening...</p>
+    <div class="controls">
+        <button id="startRecBtn" class="btn">Start Recording</button>
+        <button id="stopRecBtn" class="btn" disabled>Stop &amp; Transcribe</button>
+    </div>
+    <p id="whisperResult"></p>
   </div>
+  <script src="whisper.js"></script>
 </body>
 </html>

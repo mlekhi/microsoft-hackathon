@@ -1,7 +1,7 @@
 const AZURE_WHISPER_ENDPOINT = 'https://amin-mcci4fqi-swedencentral.cognitiveservices.azure.com';
 const AZURE_WHISPER_DEPLOY    = 'whisper';
 const AZURE_API_VERSION       = '2024-06-01';
-const AZURE_API_KEY           = '<redacted>';
+const AZURE_API_KEY           = '';
 
 
 const startBtn = document.getElementById('startRecBtn');
@@ -63,6 +63,8 @@ stopBtn.onclick = () => {
         output.textContent = `❌ ${data.error?.message || 'Failed to transcribe'}`;
       } else {
         output.textContent = data.text || '[No text returned]';
+        await askGPT(`Transcribe this audio: ${data.text}`);
+        output.textContent += '\n\n💬 GPT response:\n' + data.text;
       }
     } catch (err) {
       console.error(err);

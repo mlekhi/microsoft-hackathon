@@ -1,28 +1,38 @@
 // src/renderer/chat.js
-import { config } from 'dotenv';
-config();
 
-import { AzureOpenAI } from 'openai';
+const apiKey = "";
+const endpoint = "https://intern-hackathon-openai.openai.azure.com";
+const deployment = "gpt-4o-mini";
+const apiVersion = "2024-12-01-preview";
 
-const apiKey = process.env.AZURE_OPENAI_API_KEY;
-const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-const deployment = process.env.AZURE_OPENAI_DEPLOYMENT;
-const apiVersion = process.env.AZURE_OPENAI_API_VERSION;
+async function askGPT(prompt) {
+  const url = `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
-const client = new AzureOpenAI({ apiKey, endpoint, deployment, apiVersion });
-
-export async function askGPT(prompt) {
-  const response = await client.chat.completions.create({
+  const payload = {
     messages: [
       { role: 'system', content: 'You are a helpful assistant.' },
       { role: 'user', content: prompt }
     ],
-    model: deployment,
-    max_tokens: 1000,
-    temperature: 0.7
+    temperature: 0.7,
+    max_tokens: 1000
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': apiKey
+    },
+    body: JSON.stringify(payload)
   });
 
-  return response.choices[0].message.content;
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Unknown error from Azure OpenAI');
+  }
+
+  const data = await res.json();
+  return data.choices[0].message.content;
 }
 
 // TEMP test runner
@@ -31,10 +41,8 @@ async function main() {
     const result = await askGPT('What are 3 interesting ideas for a hackathon project?');
     console.log('\n💬 GPT says:\n', result);
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error('❌ Error:', err.message);
   }
 }
 
-if (process.env.RUN_CHAT_MAIN === 'true') {
-  main();
-}
+main();
