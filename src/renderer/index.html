@@ -3,23 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MeetMindr</title>
+  <title>Pulse</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+      background: #fff;
     }
 
     .overlay {
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      position: relative; /* Needed for positioning context */
+      background: none;
+      border-radius: 0;
+      box-shadow: none;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 32px 24px 24px 24px;
     }
 
     .top-left-controls {
@@ -37,23 +47,46 @@
     }
 
     .btn {
-      padding: 10px 16px;
-      font-size: 16px;
-      margin: 6px;
+      padding: 10px 24px;
+      font-size: 1.1rem;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
       cursor: pointer;
+      font-weight: 600;
+      background: #6264a7;
+      color: #fff;
+      transition: background 0.18s;
+      box-shadow: 0 2px 8px 0 rgba(60, 60, 120, 0.08);
     }
 
-    .btn-large {
-      font-size: 18px;
-      padding: 12px 24px;
+    .btn.primary, .btn.btn-large {
+      background: linear-gradient(90deg, #6264a7 60%, #464775 100%);
+      color: #fff;
+    }
+
+    .btn:hover {
+      background: #464775;
+    }
+
+    .modal-content {
+      border-radius: 16px;
+      box-shadow: 0 4px 24px 0 rgba(60, 60, 120, 0.18);
+    }
+
+    .app-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #464775;
+      letter-spacing: 0.5px;
+      margin-bottom: 32px;
+      font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
-    <div class="top-left-controls">
-      <button id="settingsBtn" class="btn">⚙️</button>
-    </div>
+    <button id="settingsBtn" class="btn secondary" style="margin-bottom: 24px;">⚙️</button>
 
     <!-- Centered Title -->
     <h1 class="app-title">Pulse</h1>
