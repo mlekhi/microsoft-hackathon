@@ -4,6 +4,11 @@ const AZURE_API_VERSION       = '2024-06-01';
 const AZURE_API_KEY           = '';
 
 
+const apiKey = "";
+const endpoint = "https://intern-hackathon-openai.openai.azure.com";
+const deployment = "gpt-4o-mini";
+const apiVersion = "2024-12-01-preview";
+
 const startBtn = document.getElementById('startRecBtn');
 const stopBtn  = document.getElementById('stopRecBtn');
 const output   = document.getElementById('whisperResult');
@@ -12,6 +17,63 @@ const backBtn  = document.getElementById('backBtn');
 console.log(AZURE_WHISPER_ENDPOINT);
 
 let recorder, chunks = [];
+
+async function askGPT(transcript) {
+  const url = `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+  const prompt = `
+From the following meeting discussion, generate a multiple-choice quiz question that tests whether someone was paying attention.
+
+Respond **only** in this exact JSON format:
+{
+  "question": "string",
+  "choices": {
+    "A": "string",
+    "B": "string",
+    "C": "string",
+    "D": "string"
+  },
+  "answer": "A" | "B" | "C" | "D",
+  "explanation": "string"
+}
+
+MEETING SNIPPET:
+"""${transcript}"""
+`.trim();
+
+  const payload = {
+    messages: [
+      { role: 'system', content: 'You are an AI that creates factual multiple choice quizzes from transcripts.' },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.5,
+    max_tokens: 500
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': apiKey
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Unknown error from Azure OpenAI');
+  }
+
+  const data = await res.json();
+  const raw = data.choices[0].message.content.trim();
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch (err) {
+    throw new Error('Failed to parse GPT response as JSON:\n' + raw);
+  }
+}
 
 function getWhisperUrl() {
   // now uses the correct constant
@@ -62,9 +124,11 @@ stopBtn.onclick = () => {
       if (!res.ok) {
         output.textContent = `❌ ${data.error?.message || 'Failed to transcribe'}`;
       } else {
-        output.textContent = data.text || '[No text returned]';
-        await askGPT(`Transcribe this audio: ${data.text}`);
-        output.textContent += '\n\n💬 GPT response:\n' + data.text;
+        // output.textContent = data.text || '[No text returned]';
+        const response = await askGPT(data.text);
+        console.log('GPT response', response);
+        // output.textContent = JSON.stringify(response, null, 2);
+        showQuizModal(response);
       }
     } catch (err) {
       console.error(err);
