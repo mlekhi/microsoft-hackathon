@@ -116,23 +116,35 @@ function minimizeWindow() {
       window.electronAPI.createOverlayWindow();
     }
   } else {
-    // Fallback for web version - hide the main content but keep body visible
-    const mainContent = document.querySelector('main') || document.querySelector('.container') || document.querySelector('#app');
-    if (mainContent) {
-      mainContent.style.display = 'none';
-    } else {
-      // If no main container found, hide all direct children of body except our circular icon
-      Array.from(document.body.children).forEach(child => {
-        if (child.id !== 'recordingIcon') {
-          child.style.display = 'none';
-        }
-      });
+    // Fallback for web version - maximize window transparently and hide all content
+    
+    // First, maximize the window to fullscreen
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
     }
+    
+    // Make background completely transparent
+    document.body.style.background = 'transparent';
+    document.documentElement.style.background = 'transparent';
+    
+    // Hide all direct children of body except our circular icon
+    Array.from(document.body.children).forEach(child => {
+      if (child.id !== 'recordingIcon') {
+        child.style.display = 'none';
+      }
+    });
+    
     showCircularIcon();
   }
 }
 
 function restoreWindow() {
+  console.log('restoreWindow called'); // Debug log
+  
   if (window.electronAPI && window.electronAPI.restoreWindow) {
     window.electronAPI.restoreWindow();
     // Close overlay window
@@ -140,19 +152,58 @@ function restoreWindow() {
       window.electronAPI.closeOverlayWindow();
     }
   } else {
-    // Fallback for web version - show the main content
-    const mainContent = document.querySelector('main') || document.querySelector('.container') || document.querySelector('#app');
-    if (mainContent) {
-      mainContent.style.display = 'block';
-    } else {
+    console.log('Using web fallback for window restoration'); // Debug log
+    
+    // Fallback for web version - exit fullscreen, restore background and show content
+    
+    // Hide the circular icon first
+    hideCircularIcon();
+    
+    // Exit fullscreen mode
+    let exitFullscreenPromise = null;
+    if (document.exitFullscreen) {
+      console.log('Exiting fullscreen with document.exitFullscreen'); // Debug log
+      exitFullscreenPromise = document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      console.log('Exiting fullscreen with webkitExitFullscreen'); // Debug log
+      exitFullscreenPromise = document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      console.log('Exiting fullscreen with msExitFullscreen'); // Debug log
+      exitFullscreenPromise = document.msExitFullscreen();
+    }
+    
+    // Wait for fullscreen exit to complete, then restore content
+    const restoreContent = () => {
+      console.log('Restoring content...'); // Debug log
+      
+      // Restore original background
+      document.body.style.background = '';
+      document.documentElement.style.background = '';
+      
       // Restore all hidden children
       Array.from(document.body.children).forEach(child => {
         if (child.id !== 'recordingIcon') {
           child.style.display = '';
         }
       });
+      
+      // Ensure the window is visible and focused
+      window.focus();
+      console.log('Content restored'); // Debug log
+    };
+    
+    // Use promise if available, otherwise use timeout
+    if (exitFullscreenPromise && exitFullscreenPromise.then) {
+      exitFullscreenPromise.then(restoreContent).catch((error) => {
+        console.log('Fullscreen exit promise failed:', error); // Debug log
+        // Fallback if promise fails
+        setTimeout(restoreContent, 100);
+      });
+    } else {
+      // Use timeout for browsers that don't return promises
+      console.log('Using timeout fallback for content restoration'); // Debug log
+      setTimeout(restoreContent, 100);
     }
-    hideCircularIcon();
   }
 }
 
@@ -220,12 +271,30 @@ function showCircularIcon() {
     circularIcon.style.transform = `translate(${currentPosition.x}px, ${currentPosition.y}px)`;
   };
   
+  // Add click event as backup
+  circularIcon.onclick = (e) => {
+    // Only restore if we haven't moved much (not a drag)
+    const deltaX = Math.abs(e.clientX - initialMousePos.x);
+    const deltaY = Math.abs(e.clientY - initialMousePos.y);
+    
+    if (deltaX < 10 && deltaY < 10) {
+      console.log('Click event detected, restoring window...'); // Debug log
+      restoreWindow();
+    }
+  };
+  
   document.onmousemove = (e) => {
     if (!isDragging) return;
     e.preventDefault();
     
-    const x = e.clientX - dragOffset.x;
-    const y = e.clientY - dragOffset.y;
+    let x = e.clientX - dragOffset.x;
+    let y = e.clientY - dragOffset.y;
+    
+    // Constrain to screen bounds with padding
+    const padding = 10;
+    const iconSize = 60;
+    x = Math.max(padding, Math.min(window.innerWidth - iconSize - padding, x));
+    y = Math.max(padding, Math.min(window.innerHeight - iconSize - padding, y));
     
     // Update current position
     currentPosition.x = x;
@@ -259,7 +328,10 @@ function showCircularIcon() {
     const deltaX = Math.abs(e.clientX - initialMousePos.x);
     const deltaY = Math.abs(e.clientY - initialMousePos.y);
     
+    console.log('Mouse movement delta:', deltaX, deltaY); // Debug log
+    
     if (deltaX < 5 && deltaY < 5) {
+      console.log('Click detected, restoring window...'); // Debug log
       restoreWindow();
     }
   };
