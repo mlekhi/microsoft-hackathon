@@ -1,5 +1,5 @@
 run npm install at root
 
-also run npm install electron --save-dev
+run npm install electron --save-dev
 
-npm start to run application
+run npm start to run application
