@@ -3,9 +3,10 @@
  * A reusable vanilla JS component to display a multiple-choice quiz popup with shuffled answers.
  */
 
-// Call this function with the parsed quiz object:
+// Call this function with the parsed quiz object and optional callback:
 // { question: string, choices: {A: string, B: string, C: string, D: string}, answer: 'A'|'B'|'C'|'D', explanation: string }
-function showQuizModal(quiz) {
+// callback: function to call when modal is closed
+function showQuizModal(quiz, onCloseCallback) {
     // Remove any existing modal
     const existing = document.getElementById('quizModalBackdrop');
     if (existing) existing.remove();
@@ -76,9 +77,32 @@ function showQuizModal(quiz) {
     modal.appendChild(footer);
     backdrop.appendChild(modal);
     document.body.appendChild(backdrop);
+    
+    // Close modal when clicking outside
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        closeModal();
+      }
+    });
+    
+    // Close modal with Escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
   
     // Handlers
-    cancelBtn.onclick = () => backdrop.remove();
+    const closeModal = () => {
+      backdrop.remove();
+      if (onCloseCallback && typeof onCloseCallback === 'function') {
+        onCloseCallback();
+      }
+    };
+    
+    cancelBtn.onclick = closeModal;
   
     submitBtn.onclick = () => {
       const selected = modal.querySelector('input[name=quizChoice]:checked');
@@ -107,7 +131,7 @@ function showQuizModal(quiz) {
       const closeBtn = document.createElement('button');
       closeBtn.className = 'btn';
       closeBtn.textContent = 'Close';
-      closeBtn.onclick = () => backdrop.remove();
+      closeBtn.onclick = closeModal;
       modal.appendChild(closeBtn);
     };
   }

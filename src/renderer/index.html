@@ -3,15 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MeetMindr</title>
+  <title>Pulse AI</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    /* Reset and base styles */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      transition: var(--transition);
     }
 
+    /* Theme variables - light mode default */
+    body {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --accent-primary: #3b82f6;
+      --accent-secondary: #6366f1;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --transition: all 0.2s ease-in-out;
+      
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    /* Dark mode theme variables */
+    body.dark-mode {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --accent-primary: #60a5fa;
+      --accent-secondary: #818cf8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Main container */
     .overlay {
       height: 100vh;
       display: flex;
@@ -19,36 +60,190 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      padding: 20px;
+      box-sizing: border-box;
     }
 
+    /* App title */
+    .app-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    /* Controls container */
     .home-controls {
       display: flex;
-      flex-direction: row;
-      justify-content: center;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
+      justify-content: center;
+      align-items: center;
     }
 
+    /* Button styles */
     .btn {
-      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
       font-size: 16px;
-      margin: 6px;
+      font-weight: 500;
       cursor: pointer;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      user-select: none;
     }
 
+    .btn:hover {
+      background: var(--bg-tertiary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-primary);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Large button variant */
     .btn-large {
       font-size: 18px;
-      padding: 12px 24px;
+      padding: 16px 32px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-large:hover {
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-content h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .modal-content label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      margin-top: 16px;
+      color: var(--text-secondary);
+    }
+
+    .modal-content input,
+    .modal-content select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: var(--transition);
+      box-sizing: border-box;
+    }
+
+    .modal-content input:focus,
+    .modal-content select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-content .btn {
+      margin-top: 20px;
+      margin-right: 8px;
+    }
+
+    .modal-content .btn:last-child {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      margin-right: 0;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .app-title {
+        font-size: 2rem;
+      }
+      
+      .home-controls {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .btn-large {
+        width: 100%;
+        max-width: 280px;
+      }
     }
   </style>
 </head>
-<body>
+<body class="light-mode">
   <div class="overlay">
     <!-- Centered Title -->
     
 
     <!-- Centered Controls -->
-    <h1 class="app-title">MeetMindr</h1>
+    <h1 class="app-title">Pulse AI</h1>
     <div class="home-controls">
       <button id="settingsBtn" class="btn">⚙️</button>
       <button id="themeBtn" class="btn" title="Toggle theme">🌙</button>
@@ -65,17 +260,80 @@
       <label>Quiz Frequency (mins): <input type="number" min="1" max="15" value="5" /></label><br />
       <label>Voice Model: <select><option>Whisper</option></select></label><br />
       <button class="btn">Save</button>
-      <button class="btn" onclick="document.getElementById('settingsModal').style.display='none'">Close</button>
+      <button class="btn" onclick="hideSettings()">Close</button>
     </div>
   </div>
 
   <script>
-    document.getElementById('settingsBtn').onclick = () => {
-      document.getElementById('settingsModal').style.display = 'block';
-    };
-    document.getElementById('startMonitoringBtn').onclick = () => {
+    // Theme management
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+    
+    // Initialize theme
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light-mode';
+      body.className = savedTheme;
+      updateThemeIcon();
+    }
+
+    // Toggle theme
+    function toggleTheme() {
+      if (body.classList.contains('light-mode')) {
+        body.className = 'dark-mode';
+        localStorage.setItem('theme', 'dark-mode');
+      } else {
+        body.className = 'light-mode';
+        localStorage.setItem('theme', 'light-mode');
+      }
+      updateThemeIcon();
+    }
+
+    // Update theme icon and tooltip
+    function updateThemeIcon() {
+      if (body.classList.contains('dark-mode')) {
+        themeBtn.innerHTML = '☀️';
+        themeBtn.title = 'Switch to light mode';
+      } else {
+        themeBtn.innerHTML = '🌙';
+        themeBtn.title = 'Switch to dark mode';
+      }
+    }
+
+    // Modal management
+    function showSettings() {
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function hideSettings() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function startMonitoring() {
       window.location.href = 'monitor.html';
-    };
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeTheme();
+      
+      themeBtn.addEventListener('click', toggleTheme);
+      document.getElementById('settingsBtn').addEventListener('click', showSettings);
+      document.getElementById('startMonitoringBtn').addEventListener('click', startMonitoring);
+      
+      // Close modal when clicking outside
+      document.getElementById('settingsModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          hideSettings();
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('settingsModal').style.display === 'flex') {
+          hideSettings();
+        }
+      });
+    });
   </script>
 </body>
 </html>

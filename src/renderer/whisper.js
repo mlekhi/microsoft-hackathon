@@ -12,6 +12,25 @@ const startBtn = document.getElementById('startRecBtn');
 const stopBtn  = document.getElementById('stopRecBtn');
 const output   = document.getElementById('whisperResult');
 const backBtn  = document.getElementById('backBtn');
+const statusIndicator = document.getElementById('statusIndicator');
+const statusIcon = document.getElementById('statusIcon');
+const statusText = document.getElementById('statusText');
+
+// Status management functions
+function showStatus(icon, text, className = '') {
+  if (statusIndicator && statusIcon && statusText) {
+    statusIcon.textContent = icon;
+    statusText.textContent = text;
+    statusIndicator.className = `status-indicator ${className}`;
+    statusIndicator.style.display = 'flex';
+  }
+}
+
+function hideStatus() {
+  if (statusIndicator) {
+    statusIndicator.style.display = 'none';
+  }
+}
 
 // Add circular icon element
 let circularIcon = null;
@@ -255,6 +274,25 @@ function hideCircularIcon() {
   }
 }
 
+// Function to reset UI state after quiz completion
+function resetUIState() {
+  output.textContent = '';
+  hideStatus();
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  
+  // Clear any chunks
+  chunks = [];
+  
+  // Stop any ongoing recording if somehow still active
+  if (recorder && recorder.state === 'recording') {
+    recorder.stop();
+  }
+  
+  // Make sure window is restored
+  restoreWindow();
+}
+
 startBtn.onclick = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -263,7 +301,7 @@ startBtn.onclick = async () => {
     recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
     recorder.start();
 
-    output.textContent = '🔴 Recording…';
+    showStatus('🔴', 'Recording...', 'recording');
     startBtn.disabled = true;
     stopBtn.disabled  = false;
     
@@ -274,7 +312,7 @@ startBtn.onclick = async () => {
     
   } catch (err) {
     console.error(err);
-    output.textContent = '❌ Mic access denied.';
+    showStatus('❌', 'Microphone access denied', 'error');
   }
 };
 
@@ -283,7 +321,7 @@ stopBtn.onclick = () => {
   recorder.stop();
   startBtn.disabled = false;
   stopBtn.disabled  = true;
-  output.textContent = '⏳ Processing…';
+  showStatus('⏳', 'Processing transcription...', 'processing');
   
   // Hide circular icon when stopping
   hideCircularIcon();
@@ -304,17 +342,22 @@ stopBtn.onclick = () => {
       console.log('Whisper response', data);
 
       if (!res.ok) {
-        output.textContent = `❌ ${data.error?.message || 'Failed to transcribe'}`;
+        showStatus('❌', data.error?.message || 'Failed to transcribe', 'error');
       } else {
-        // output.textContent = data.text || '[No text returned]';
+        showStatus('🤖', 'Generating quiz question...', 'processing');
+        
         const response = await askGPT(data.text);
         console.log('GPT response', response);
-        // output.textContent = JSON.stringify(response, null, 2);
-        showQuizModal(response);
+        
+        // Clear the processing message before showing quiz
+        hideStatus();
+        
+        // Show quiz modal with callback to reset UI when closed
+        showQuizModal(response, resetUIState);
       }
     } catch (err) {
       console.error(err);
-      output.textContent = `❌ ${err.message}`;
+      showStatus('❌', err.message, 'error');
     }
   };
 };

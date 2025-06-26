@@ -5,17 +5,235 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Whisper Test</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Reset and base styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      transition: var(--transition);
+    }
+
+    /* Theme variables - light mode default */
+    body {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --accent-primary: #3b82f6;
+      --accent-secondary: #6366f1;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --transition: all 0.2s ease-in-out;
+      
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    /* Dark mode theme variables */
+    body.dark-mode {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --accent-primary: #60a5fa;
+      --accent-secondary: #818cf8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Main container */
+    .overlay {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Page title */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Content container */
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    /* Controls container */
+    .controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Button styles */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      user-select: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-primary);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Primary button style for start recording */
+    #startRecBtn {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      border: none;
+    }
+
+    #startRecBtn:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+    }
+
+    /* Stop button style */
+    #stopRecBtn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+    }
+
+    #stopRecBtn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+
+    /* Back button style */
+    #backBtn {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    /* Result display */
+    #whisperResult {
+      width: 100%;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 120px;
+      box-shadow: var(--shadow-sm);
+      white-space: pre-wrap;
+      text-align: left;
+      font-family: 'SF Mono', Monaco, Consolas, monospace;
+    }
+
+    /* Empty state for result */
+    #whisperResult:empty::before {
+      content: "Transcription results will appear here...";
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .overlay {
+        padding: 16px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+      
+      #whisperResult {
+        padding: 16px;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="overlay">
     <h1>Whisper Transcription</h1>
-    <div style="padding:16px;">
-      <button id="startRecBtn" class="btn">Start Recording</button>
-      <button id="stopRecBtn" class="btn" disabled>Stop &amp; Transcribe</button>
-      <pre id="whisperResult" style="margin-top:12px;"></pre>
-      <button id="backBtn" class="btn" style="margin-top:16px;">← Back</button>
+    <div class="content">
+      <div class="controls">
+        <button id="startRecBtn" class="btn">🎙️ Start Recording</button>
+        <button id="stopRecBtn" class="btn" disabled>⏹️ Stop &amp; Transcribe</button>
+      </div>
+      <pre id="whisperResult"></pre>
+      <button id="backBtn" class="btn">← Back</button>
     </div>
   </div>
   <script src="whisper.js"></script>
+  <script>
+    // Theme management - sync with index.html
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light-mode';
+      document.body.className = savedTheme;
+    }
+
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', initializeTheme);
+  </script>
 </body>
 </html>
