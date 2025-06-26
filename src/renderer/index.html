@@ -219,6 +219,26 @@
       margin-right: 0;
     }
 
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      min-width: 120px;
+      margin: 0 !important;
+    }
+
+    #randomIntervalGroup {
+      padding-left: 20px;
+      border-left: 3px solid var(--accent-primary);
+      margin-left: 10px;
+      transition: var(--transition);
+    }
+
     /* Responsive design */
     @media (max-width: 480px) {
       .app-title {
@@ -253,14 +273,35 @@
     <button id="startMonitoringBtn" class="btn btn-large">🎙️ Start Monitoring</button>
   </div>
 
-  <!-- Modal -->
+  <!-- Settings Modal -->
   <div id="settingsModal" class="modal" style="display: none;">
     <div class="modal-content">
       <h2>Settings</h2>
-      <label>Quiz Frequency (mins): <input type="number" min="1" max="15" value="5" /></label><br />
-      <label>Voice Model: <select><option>Whisper</option></select></label><br />
-      <button class="btn">Save</button>
-      <button class="btn" onclick="hideSettings()">Close</button>
+      
+      <label for="quizFrequencyType">Quiz Frequency Type:</label>
+      <select id="quizFrequencyType">
+        <option value="fixed">Fixed Interval</option>
+        <option value="random">Random Interval</option>
+      </select>
+      
+      <div id="fixedIntervalGroup">
+        <label for="fixedInterval">Quiz Frequency (minutes):</label>
+        <input type="number" id="fixedInterval" min="1" max="60" value="5" />
+      </div>
+      
+      <div id="randomIntervalGroup" style="display: none;">
+        <label for="randomMinInterval">Minimum Interval (minutes):</label>
+        <input type="number" id="randomMinInterval" min="1" max="30" value="3" />
+        
+        <label for="randomMaxInterval">Maximum Interval (minutes):</label>
+        <input type="number" id="randomMaxInterval" min="2" max="60" value="10" />
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn" id="saveSettingsBtn">Save Settings</button>
+        <button class="btn" onclick="hideSettings()">Cancel</button>
+        <button class="btn" id="resetSettingsBtn">Reset to Defaults</button>
+      </div>
     </div>
   </div>
 
@@ -299,8 +340,124 @@
       }
     }
 
+    // Settings management
+    const defaultSettings = {
+      quizFrequencyType: 'fixed',
+      fixedInterval: 5,
+      randomMinInterval: 3,
+      randomMaxInterval: 10
+    };
+
+    let currentSettings = { ...defaultSettings };
+
+    // Load settings from localStorage
+    function loadSettings() {
+      const savedSettings = localStorage.getItem('meetMindrSettings');
+      if (savedSettings) {
+        try {
+          currentSettings = { ...defaultSettings, ...JSON.parse(savedSettings) };
+        } catch (e) {
+          console.warn('Failed to parse saved settings, using defaults');
+          currentSettings = { ...defaultSettings };
+        }
+      }
+    }
+
+    // Save settings to localStorage
+    function saveSettings() {
+      localStorage.setItem('meetMindrSettings', JSON.stringify(currentSettings));
+    }
+
+    // Apply settings to form elements
+    function applySettingsToForm() {
+      document.getElementById('quizFrequencyType').value = currentSettings.quizFrequencyType;
+      document.getElementById('fixedInterval').value = currentSettings.fixedInterval;
+      document.getElementById('randomMinInterval').value = currentSettings.randomMinInterval;
+      document.getElementById('randomMaxInterval').value = currentSettings.randomMaxInterval;
+      
+      toggleIntervalGroupVisibility();
+    }
+
+    // Toggle visibility of interval groups based on frequency type
+    function toggleIntervalGroupVisibility() {
+      const frequencyType = document.getElementById('quizFrequencyType').value;
+      const fixedGroup = document.getElementById('fixedIntervalGroup');
+      const randomGroup = document.getElementById('randomIntervalGroup');
+      
+      if (frequencyType === 'random') {
+        fixedGroup.style.display = 'none';
+        randomGroup.style.display = 'block';
+      } else {
+        fixedGroup.style.display = 'block';
+        randomGroup.style.display = 'none';
+      }
+    }
+
+    // Validate settings form
+    function validateSettings() {
+      const frequencyType = document.getElementById('quizFrequencyType').value;
+      
+      if (frequencyType === 'fixed') {
+        const interval = parseInt(document.getElementById('fixedInterval').value);
+        if (!interval || interval < 1 || interval > 60) {
+          alert('Fixed interval must be between 1 and 60 minutes');
+          return false;
+        }
+      } else {
+        const minInterval = parseInt(document.getElementById('randomMinInterval').value);
+        const maxInterval = parseInt(document.getElementById('randomMaxInterval').value);
+        
+        if (!minInterval || minInterval < 1 || minInterval > 30) {
+          alert('Minimum interval must be between 1 and 30 minutes');
+          return false;
+        }
+        
+        if (!maxInterval || maxInterval < 2 || maxInterval > 60) {
+          alert('Maximum interval must be between 2 and 60 minutes');
+          return false;
+        }
+        
+        if (minInterval >= maxInterval) {
+          alert('Minimum interval must be less than maximum interval');
+          return false;
+        }
+      }
+      
+      return true;
+    }
+
+    // Save settings from form
+    function saveSettingsFromForm() {
+      if (!validateSettings()) {
+        return;
+      }
+      
+      currentSettings.quizFrequencyType = document.getElementById('quizFrequencyType').value;
+      currentSettings.fixedInterval = parseInt(document.getElementById('fixedInterval').value);
+      currentSettings.randomMinInterval = parseInt(document.getElementById('randomMinInterval').value);
+      currentSettings.randomMaxInterval = parseInt(document.getElementById('randomMaxInterval').value);
+      
+      saveSettings();
+      hideSettings();
+      
+      // Show confirmation
+      alert('Settings saved successfully!');
+    }
+
+    // Reset settings to defaults
+    function resetSettings() {
+      if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        currentSettings = { ...defaultSettings };
+        applySettingsToForm();
+        saveSettings();
+        alert('Settings reset to defaults');
+      }
+    }
+
     // Modal management
     function showSettings() {
+      loadSettings();
+      applySettingsToForm();
       document.getElementById('settingsModal').style.display = 'flex';
     }
 
@@ -309,6 +466,8 @@
     }
 
     function startMonitoring() {
+      // Pass settings to the monitoring page
+      sessionStorage.setItem('meetMindrSettings', JSON.stringify(currentSettings));
       window.location.href = 'monitor.html';
     }
 
@@ -319,6 +478,11 @@
       themeBtn.addEventListener('click', toggleTheme);
       document.getElementById('settingsBtn').addEventListener('click', showSettings);
       document.getElementById('startMonitoringBtn').addEventListener('click', startMonitoring);
+      
+      // Settings form event listeners
+      document.getElementById('quizFrequencyType').addEventListener('change', toggleIntervalGroupVisibility);
+      document.getElementById('saveSettingsBtn').addEventListener('click', saveSettingsFromForm);
+      document.getElementById('resetSettingsBtn').addEventListener('click', resetSettings);
       
       // Close modal when clicking outside
       document.getElementById('settingsModal').addEventListener('click', (e) => {

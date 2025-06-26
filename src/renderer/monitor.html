@@ -291,8 +291,58 @@
       document.body.className = savedTheme;
     }
 
-    // Initialize theme on page load
-    document.addEventListener('DOMContentLoaded', initializeTheme);
+    // Load and display current quiz settings
+    function displayQuizSettings() {
+      try {
+        const sessionSettings = sessionStorage.getItem('meetMindrSettings');
+        const localSettings = localStorage.getItem('meetMindrSettings');
+        
+        let settings = null;
+        if (sessionSettings) {
+          settings = JSON.parse(sessionSettings);
+        } else if (localSettings) {
+          settings = JSON.parse(localSettings);
+        }
+        
+        if (settings) {
+          console.log('Quiz settings loaded:', settings);
+          
+          // Create a small settings display
+          const settingsDisplay = document.createElement('div');
+          settingsDisplay.id = 'quizSettingsDisplay';
+          settingsDisplay.style.cssText = `
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            max-width: 200px;
+          `;
+          
+          let settingsText = `Quiz Mode: ${settings.quizFrequencyType}`;
+          if (settings.quizFrequencyType === 'fixed') {
+            settingsText += `\nInterval: ${settings.fixedInterval} min`;
+          } else {
+            settingsText += `\nRange: ${settings.randomMinInterval}-${settings.randomMaxInterval} min`;
+          }
+          
+          settingsDisplay.textContent = settingsText;
+          document.querySelector('.overlay').appendChild(settingsDisplay);
+        }
+      } catch (error) {
+        console.warn('Failed to display quiz settings:', error);
+      }
+    }
+
+    // Initialize theme and settings display on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeTheme();
+      displayQuizSettings();
+    });
   </script>
 </body>
 </html>
