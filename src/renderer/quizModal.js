@@ -129,7 +129,7 @@ function showQuizModal(quiz, onCloseCallback) {
   
       // Add Close button
       const closeBtn = document.createElement('button');
-      closeBtn.className = 'btn';
+      closeBtn.className = 'btn quiz-close';
       closeBtn.textContent = 'Close';
       closeBtn.onclick = closeModal;
       modal.appendChild(closeBtn);
@@ -138,4 +138,3 @@ function showQuizModal(quiz, onCloseCallback) {
   
   // Expose globally
   window.showQuizModal = showQuizModal;
-  

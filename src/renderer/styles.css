@@ -745,3 +745,13 @@ body.dark-mode .quiz-choices li:hover {
   background: var(--bg-tertiary);
   border-color: var(--accent-primary);
 }
+
+.quiz-modal .btn.quiz-close {
+  display: block;
+  margin: 32px auto 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  font-size: 1.1em;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
