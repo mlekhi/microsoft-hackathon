@@ -5,54 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Monitoring - MeetMindr</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
     }
 
     .overlay {
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+      width: 100vw;
       position: relative;
     }
 
-    .back-button {
+    .center-content {
       position: absolute;
-      top: 20px;
-      left: 20px;
-      padding: 8px 14px;
-      font-size: 16px;
-      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
 
-    h1 {
-      font-size: 32px;
-      margin-bottom: 12px;
+    .center-content > * {
+      pointer-events: auto;
     }
+
+    .monitor-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #464775;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+    }
+
     .controls {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 10px 24px;
+      font-size: 1.1rem;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      background: #6264a7;
+      color: #fff;
+      transition: background 0.18s;
+      box-shadow: 0 2px 8px 0 rgba(60, 60, 120, 0.08);
+    }
+    .btn:hover {
+      background: #4346a3;
+    }
+    .back-corner {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      background: none;
+      border: none;
+      box-shadow: none;
+      color: #6264a7;
+      font-size: 1.7rem;
+      font-weight: normal;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+    .back-corner:hover, .back-corner:focus {
+      color: #4346a3;
+      background: none;
+      outline: none;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
-    <button class="back-button btn" id="backBtn" onclick="window.location.href='index.html'">⬅️ Back</button>
-    <h1>Monitoring</h1>
-    <div class="controls">
+    <button class="back-corner" id="backBtn" onclick="window.location.href='index.html'">⬅️</button>
+    <div class="center-content">
+      <h1 class="monitor-title">Monitoring</h1>
+      <div class="controls">
         <button id="startRecBtn" class="btn">Start Recording</button>
         <button id="stopRecBtn" class="btn" disabled>Stop &amp; Transcribe</button>
+      </div>
+      <p id="whisperResult"></p>
     </div>
-    <p id="whisperResult"></p>
   </div>
   <script src="whisper.js"></script>
   <script src="quizModal.js"></script>

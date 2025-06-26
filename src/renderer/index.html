@@ -15,21 +15,21 @@
       height: 100%;
       font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
       background: #fff;
+      overflow: hidden;
     }
 
     .overlay {
-      min-height: 100vh;
+      height: 100vh !important;
+      position: relative;
+      background: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      background: none;
-      border-radius: 0;
-      box-shadow: none;
-      max-width: 400px;
-      margin: 40px auto;
-      padding: 32px 24px 24px 24px;
+      margin: 0 !important;
+      padding: 0 !important;
+      max-width: none !important;
     }
 
     .top-left-controls {
@@ -53,20 +53,15 @@
       border-radius: 8px;
       border: none;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 500;
       background: #6264a7;
       color: #fff;
       transition: background 0.18s;
       box-shadow: 0 2px 8px 0 rgba(60, 60, 120, 0.08);
     }
 
-    .btn.primary, .btn.btn-large {
-      background: linear-gradient(90deg, #6264a7 60%, #464775 100%);
-      color: #fff;
-    }
-
     .btn:hover {
-      background: #464775;
+      background: #4346a3;
     }
 
     .modal-content {
@@ -79,20 +74,54 @@
       font-weight: 700;
       color: #464775;
       letter-spacing: 0.5px;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
       font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+    }
+
+    .settings-corner {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      background: none;
+      border: none;
+      box-shadow: none;
+      color: #6264a7;
+      font-size: 1.7rem;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+    .settings-corner:hover, .settings-corner:focus {
+      color: #4346a3;
+      background: none;
+      outline: none;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      margin: 0 auto;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
-    <button id="settingsBtn" class="btn secondary" style="margin-bottom: 24px;">⚙️</button>
-
-    <!-- Centered Title -->
+    <button id="settingsBtn" class="settings-corner">⚙️</button>
     <h1 class="app-title">Pulse</h1>
-
-    <!-- Start Monitoring -->
-    <button id="startMonitoringBtn" class="btn primary btn-large">🎙️ Start Monitoring</button>
+    <button id="startMonitoringBtn" class="btn">🎙️ Start Monitoring</button>
   </div>
 
   <!-- Modal -->

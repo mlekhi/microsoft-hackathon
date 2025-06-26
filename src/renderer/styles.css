@@ -43,7 +43,7 @@ body {
   padding: 10px 24px;
   font-size: 1.1rem;
   font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   border-radius: var(--radius);
   border: none;
   background: var(--accent-primary);
