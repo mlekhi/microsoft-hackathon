@@ -19,6 +19,13 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      position: relative; /* Needed for positioning context */
+    }
+
+    .top-left-controls {
+      position: absolute;
+      top: 16px;
+      left: 16px;
     }
 
     .home-controls {
@@ -44,38 +51,79 @@
 </head>
 <body>
   <div class="overlay">
-    <!-- Centered Title -->
-    
-
-    <!-- Centered Controls -->
-    <h1 class="app-title">MeetMindr</h1>
-    <div class="home-controls">
+    <div class="top-left-controls">
       <button id="settingsBtn" class="btn">⚙️</button>
-      <button id="themeBtn" class="btn" title="Toggle theme">🌙</button>
     </div>
 
+    <!-- Centered Title -->
+    <h1 class="app-title">Pulse</h1>
+
     <!-- Start Monitoring -->
-    <button id="startMonitoringBtn" class="btn btn-large">🎙️ Start Monitoring</button>
+    <button id="startMonitoringBtn" class="btn primary btn-large">🎙️ Start Monitoring</button>
   </div>
 
   <!-- Modal -->
   <div id="settingsModal" class="modal" style="display: none;">
     <div class="modal-content">
       <h2>Settings</h2>
-      <label>Quiz Frequency (mins): <input type="number" min="1" max="15" value="5" /></label><br />
-      <label>Voice Model: <select><option>Whisper</option></select></label><br />
-      <button class="btn">Save</button>
-      <button class="btn" onclick="document.getElementById('settingsModal').style.display='none'">Close</button>
+      <div class="form-group">
+        <label for="quiz-frequency">Quiz Frequency (mins)</label>
+        <input id="quiz-frequency" type="number" min="1" max="15" value="5" />
+      </div>
+      <div class="form-group">
+        <label for="voice-model">Voice Model</label>
+        <select id="voice-model">
+          <option>whisper-1</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="document.getElementById('settingsModal').style.display='none'">Close</button>
+        <button id="saveSettingsBtn" class="btn primary">Save</button>
+      </div>
     </div>
   </div>
 
   <script>
-    document.getElementById('settingsBtn').onclick = () => {
-      document.getElementById('settingsModal').style.display = 'block';
-    };
-    document.getElementById('startMonitoringBtn').onclick = () => {
-      window.location.href = 'monitor.html';
-    };
+    document.addEventListener('DOMContentLoaded', () => {
+      const settingsModal = document.getElementById('settingsModal');
+      const settingsBtn = document.getElementById('settingsBtn');
+      const startMonitoringBtn = document.getElementById('startMonitoringBtn');
+      const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+      const quizFrequencyInput = document.getElementById('quiz-frequency');
+      const voiceModelSelect = document.getElementById('voice-model');
+
+      // Load saved settings from local storage
+      const loadSettings = () => {
+        const savedFrequency = localStorage.getItem('quizFrequency');
+        const savedModel = localStorage.getItem('voiceModel');
+        if (savedFrequency) {
+          quizFrequencyInput.value = savedFrequency;
+        }
+        if (savedModel) {
+          voiceModelSelect.value = savedModel;
+        }
+      };
+
+      // Show the modal
+      settingsBtn.onclick = () => {
+        settingsModal.style.display = 'block';
+      };
+
+      // Navigate to the monitoring page
+      startMonitoringBtn.onclick = () => {
+        window.location.href = 'monitor.html';
+      };
+
+      // Save settings to local storage and close the modal
+      saveSettingsBtn.onclick = () => {
+        localStorage.setItem('quizFrequency', quizFrequencyInput.value);
+        localStorage.setItem('voiceModel', voiceModelSelect.value);
+        settingsModal.style.display = 'none';
+      };
+
+      // Load settings when the application starts
+      loadSettings();
+    });
   </script>
 </body>
 </html>
